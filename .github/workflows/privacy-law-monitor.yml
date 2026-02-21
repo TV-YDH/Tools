@@ -1,0 +1,62 @@
+# Privacy Law Monitor - Monthly GitHub Action
+# Runs on the 1st of each month. Fetches RSS feeds (IAPP, JD Supra, State AG, etc.),
+# detects new items, and sends digest to info@yourdata.health via Resend.
+#
+# Required secrets (Settings > Secrets and variables > Actions):
+#   RESEND_API_KEY - From https://resend.com (free tier: 100 emails/day)
+#
+# Optional: RESEND_FROM - Verified domain email, e.g. alerts@yourdata.health
+
+name: Privacy Law Monitor
+
+on:
+  schedule:
+    # Run at 00:00 UTC on the 1st of every month
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+    # Allow manual trigger from Actions tab
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Restore state from cache
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: privacy-law-monitor/.state
+          key: privacy-monitor-state-v1
+
+      - name: Install dependencies
+        run: |
+          pip install -r privacy-law-monitor/requirements.txt
+
+      - name: Run monitor
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          STATE_FILE: ${{ github.workspace }}/privacy-law-monitor/.state/state.json
+        run: |
+          mkdir -p privacy-law-monitor/.state
+          cd privacy-law-monitor
+          if [ ! -f ".state/state.json" ]; then
+            echo "First run: initializing state..."
+            python monitor.py --init
+          else
+            python monitor.py
+          fi
+
+      - name: Save state to cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: privacy-law-monitor/.state
+          key: privacy-monitor-state-v1

@@ -1,0 +1,10 @@
+# State file (persisted via GitHub Actions cache)
+.state/
+state.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/

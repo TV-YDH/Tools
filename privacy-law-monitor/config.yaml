@@ -1,0 +1,31 @@
+# Privacy Law Monitor - Configuration
+# Monitors RSS feeds for state/international privacy law updates
+# Sends digest to info@yourdata.health when changes detected
+
+# Email recipient
+email_to: "info@yourdata.health"
+
+# RSS feeds to monitor (add/remove as needed)
+# Sources: IAPP, JD Supra, State AG, Privacy Daily, etc.
+feeds:
+  - name: "IAPP Daily Dashboard"
+    url: "https://iapp.org/rss/daily-dashboard"
+    category: "privacy"
+  - name: "JD Supra - Privacy"
+    url: "https://www.jdsupra.com/resources/syndication/docsRSSfeed.aspx?ftype=Privacy&premium=1"
+    category: "privacy"
+  - name: "State AG Blog - Privacy"
+    url: "https://www.stateagblog.com/feed/"
+    category: "state_ag"
+  - name: "Privacy Daily - State AG Enforcement"
+    url: "https://privacy-daily.com/feed/"
+    category: "state_ag"
+  - name: "IAPP Privacy Perspectives"
+    url: "https://iapp.org/news/privacy-perspectives/feed/"
+    category: "privacy"
+
+# How many items to fetch per feed (most recent)
+items_per_feed: 15
+
+# Days to consider "new" (items newer than this are included in digest)
+new_items_days: 7
