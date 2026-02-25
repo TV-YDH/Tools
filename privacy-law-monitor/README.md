@@ -12,6 +12,8 @@ Automated monthly RSS monitor for state and international privacy law updates. S
 
 ## Setup
 
+**Detailed step-by-step guide:** See [SETUP_GUIDE.md](SETUP_GUIDE.md) for line-by-line instructions.
+
 ### 1. Resend API Key
 
 1. Sign up at [resend.com](https://resend.com) (free tier: 100 emails/day)
