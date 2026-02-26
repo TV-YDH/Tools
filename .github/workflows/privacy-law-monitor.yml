@@ -11,8 +11,8 @@ name: Privacy Law Monitor
 
 on:
   schedule:
-    # Run at 00:00 UTC on the 1st of every month
-    - cron: "0 0 1 * *"
+    # Run at 00:00 UTC every Wednesday
+    - cron: "0 0 * * 3"
   workflow_dispatch:
     # Allow manual trigger from Actions tab
 
