@@ -209,7 +209,11 @@ def send_email_via_resend(to_email, subject, html_body):
     import requests
     resp = requests.post(
         "https://api.resend.com/emails",
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "PrivacyLawMonitor/1.0 (Your Data Health)",
+        },
         json={
             "from": from_email,
             "to": [to_email],
@@ -218,7 +222,13 @@ def send_email_via_resend(to_email, subject, html_body):
         },
         timeout=30,
     )
-    resp.raise_for_status()
+    if resp.status_code != 200:
+        try:
+            err_body = resp.json()
+            msg = err_body.get("message", resp.text) or resp.text
+        except Exception:
+            msg = resp.text or f"HTTP {resp.status_code}"
+        raise RuntimeError(f"Resend API {resp.status_code}: {msg}")
     return resp.json()
 
 
