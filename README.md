@@ -6,7 +6,7 @@ Public development tools for Your Data Health – automation, monitors, and util
 
 ### [Privacy Law Monitor](privacy-law-monitor/)
 
-Automated monthly RSS monitor for state and international privacy law updates. Sends digest to info@yourdata.health when new items are detected from IAPP, JD Supra, State AG Blog, and other feeds.
+Automated weekly RSS monitor for state and international privacy law updates. Sends digest to info@yourdatahealth.net when new items are detected from IAPP, JD Supra, State AG Blog, and Privacy Daily.
 
-- **Schedule:** 1st of each month
+- **Schedule:** Every Wednesday at 00:00 UTC
 - **Output:** Email digest via Resend

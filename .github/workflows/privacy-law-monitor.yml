@@ -1,11 +1,11 @@
-# Privacy Law Monitor - Monthly GitHub Action
-# Runs on the 1st of each month. Fetches RSS feeds (IAPP, JD Supra, State AG, etc.),
-# detects new items, and sends digest to info@yourdata.health via Resend.
+# Privacy Law Monitor - Weekly GitHub Action
+# Runs every Wednesday at 00:00 UTC. Fetches RSS feeds (IAPP, JD Supra, State AG, etc.),
+# detects new items, and sends digest to info@yourdatahealth.net via Resend.
 #
 # Required secrets (Settings > Secrets and variables > Actions):
 #   RESEND_API_KEY - From https://resend.com (free tier: 100 emails/day)
 #
-# Optional: RESEND_FROM - Verified domain email, e.g. alerts@yourdata.health
+# Optional: RESEND_FROM - Verified domain email, e.g. alerts@yourdatahealth.net
 
 name: Privacy Law Monitor
 

@@ -20,9 +20,6 @@ feeds:
   - name: "Privacy Daily - State AG Enforcement"
     url: "https://privacy-daily.com/feed/"
     category: "state_ag"
-  - name: "IAPP Privacy Perspectives"
-    url: "https://iapp.org/news/privacy-perspectives/feed/"
-    category: "privacy"
 
 # How many items to fetch per feed (most recent)
 items_per_feed: 15

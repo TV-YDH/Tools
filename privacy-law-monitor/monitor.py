@@ -3,7 +3,7 @@
 Privacy Law Monitor
 ==================
 Monitors RSS feeds for state and international privacy law updates.
-Runs via GitHub Actions monthly. Sends digest to info@yourdata.health
+Runs via GitHub Actions weekly (Wednesdays). Sends digest to info@yourdatahealth.net
 when new items are detected.
 
 Usage:

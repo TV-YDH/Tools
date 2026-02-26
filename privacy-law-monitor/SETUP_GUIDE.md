@@ -1,6 +1,6 @@
 # Privacy Law Monitor – Setup Guide
 
-Step-by-step instructions to confirm the monitor is running and receive monthly digests.
+Step-by-step instructions to confirm the monitor is running and receive weekly digests.
 
 ---
 
@@ -18,7 +18,7 @@ Step-by-step instructions to confirm the monitor is running and receive monthly 
 ## Step 2: Add RESEND_API_KEY in GitHub
 
 1. Go to **https://github.com** and log in.
-2. Open your **YDH-Tools** repo.
+2. Open your **Tools** repo (or YDH-Tools).
 3. Click **Settings** (top right).
 4. In the left sidebar, click **Secrets and variables → Actions**.
 5. Click **New repository secret**.
@@ -33,7 +33,7 @@ Step-by-step instructions to confirm the monitor is running and receive monthly 
 1. On the same **Secrets and variables → Actions** page.
 2. Click **New repository secret**.
 3. For **Name**, enter: `RESEND_FROM`
-4. For **Secret**, enter: `Privacy Monitor <alerts@yourdata.health>`  
+4. For **Secret**, enter: `Privacy Monitor <alerts@yourdatahealth.net>`  
    (Use a verified domain if you have one.)
 5. Click **Add secret**.
 
@@ -41,7 +41,7 @@ Step-by-step instructions to confirm the monitor is running and receive monthly 
 
 ## Step 4: Run the Workflow First Time (Initialize State)
 
-1. In the YDH-Tools repo, click the **Actions** tab.
+1. In the Tools repo, click the **Actions** tab.
 2. In the left sidebar, click **Privacy Law Monitor**.
 3. Click **Run workflow** (top right).
 4. Leave the branch as `main` (or your default).
@@ -67,14 +67,14 @@ Step-by-step instructions to confirm the monitor is running and receive monthly 
 6. Click the **monitor** job.
 7. Confirm:
    - No "RESEND_API_KEY" error.
-   - "Sent digest to info@yourdata.health: X new items" (or "No new items").
+   - "Sent digest to info@yourdatahealth.net: X new items" (or "No new items").
    - Job finishes with a green check.
 
 ---
 
 ## Step 6: Verify the Email
 
-1. Check the inbox for **info@yourdata.health**.
+1. Check the inbox for **info@yourdatahealth.net**.
 2. Look for:
    - Subject: `Privacy Law Monitor: X new items` or `Privacy Law Monitor: No new items`
    - HTML body with links to RSS items.
@@ -85,10 +85,10 @@ Step-by-step instructions to confirm the monitor is running and receive monthly 
 
 ---
 
-## Step 7: Confirm Monthly Schedule
+## Step 7: Confirm Weekly Schedule
 
-1. In the YDH-Tools repo, go to **Actions → Privacy Law Monitor**.
-2. The workflow will run automatically on the **1st of every month at 00:00 UTC**.
+1. In the Tools repo, go to **Actions → Privacy Law Monitor**.
+2. The workflow runs automatically every **Wednesday at 00:00 UTC**.
 3. You can also manually trigger it anytime with **Run workflow**.
 
 ---
@@ -112,7 +112,7 @@ Step-by-step instructions to confirm the monitor is running and receive monthly 
 - [ ] (Optional) `RESEND_FROM` added in GitHub Secrets
 - [ ] First workflow run completed (no errors)
 - [ ] Second workflow run completed (no errors)
-- [ ] Digest email received at info@yourdata.health
+- [ ] Digest email received at info@yourdatahealth.net
 
 ---
 
