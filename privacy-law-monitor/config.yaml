@@ -1,9 +1,9 @@
 # Privacy Law Monitor - Configuration
 # Monitors RSS feeds for state/international privacy law updates
-# Sends digest to info@yourdata.health when changes detected
+# Sends digest to info@yourdatahealth.net when changes detected
 
 # Email recipient
-email_to: "info@yourdata.health"
+email_to: "info@yourdatahealth.net"
 
 # RSS feeds to monitor (add/remove as needed)
 # Sources: IAPP, JD Supra, State AG, Privacy Daily, etc.

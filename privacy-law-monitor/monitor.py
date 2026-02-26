@@ -256,7 +256,7 @@ def main():
     args = parser.parse_args()
 
     config = load_config()
-    to_email = config.get("email_to", "info@yourdata.health")
+    to_email = config.get("email_to", "info@yourdatahealth.net")
     seen_ids = load_state()
 
     new_items, all_seen, errors = collect_new_items(config, seen_ids)
