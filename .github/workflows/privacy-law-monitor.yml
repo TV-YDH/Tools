@@ -28,16 +28,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Restore state from cache
+      - name: Cache state
         uses: actions/cache@v4
-        id: cache
         with:
           path: privacy-law-monitor/.state
           key: privacy-monitor-state-v1
 
       - name: Install dependencies
-        run: |
-          pip install -r privacy-law-monitor/requirements.txt
+        run: pip install -r privacy-law-monitor/requirements.txt
 
       - name: Run monitor
         env:
@@ -53,10 +51,3 @@ jobs:
           else
             python monitor.py
           fi
-
-      - name: Save state to cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: privacy-law-monitor/.state
-          key: privacy-monitor-state-v1
