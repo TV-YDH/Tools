@@ -199,23 +199,27 @@ def build_email_html(new_items, errors):
 
 
 def send_email_via_resend(to_email, subject, html_body):
-    """Send email using Resend API. Requires RESEND_API_KEY env var."""
+    """Send email via Resend REST API. Requires RESEND_API_KEY env var."""
     api_key = os.environ.get("RESEND_API_KEY")
     if not api_key:
         raise ValueError("RESEND_API_KEY environment variable not set")
 
-    import resend
-    resend.api_key = api_key
-    # Use onboarding@resend.dev for testing; set RESEND_FROM for custom domain
     from_email = os.environ.get("RESEND_FROM") or "Privacy Monitor <onboarding@resend.dev>"
 
-    result = resend.Emails.send({
-        "from": from_email,
-        "to": [to_email],
-        "subject": subject,
-        "html": html_body,
-    })
-    return result
+    import requests
+    resp = requests.post(
+        "https://api.resend.com/emails",
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        json={
+            "from": from_email,
+            "to": [to_email],
+            "subject": subject,
+            "html": html_body,
+        },
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()
 
 
 def send_email_via_smtp(to_email, subject, html_body):
