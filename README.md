@@ -1,6 +1,6 @@
-# YDH-Tools
+# Tools
 
-Public tools for Your Data Health – automation, monitors, and utilities.
+Public development tools for Your Data Health – automation, monitors, and utilities.
 
 ## Tools
 
