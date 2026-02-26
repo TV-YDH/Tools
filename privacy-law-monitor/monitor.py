@@ -204,8 +204,8 @@ def send_email_via_resend(to_email, subject, html_body):
     if not api_key:
         raise ValueError("RESEND_API_KEY environment variable not set")
 
-    from resend import Resend
-    resend = Resend(api_key)
+    import resend
+    resend.api_key = api_key
     # Use onboarding@resend.dev for testing; set RESEND_FROM for custom domain
     from_email = os.environ.get("RESEND_FROM") or "Privacy Monitor <onboarding@resend.dev>"
 
