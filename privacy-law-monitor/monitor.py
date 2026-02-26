@@ -3,13 +3,14 @@
 Privacy Law Monitor
 ==================
 Monitors RSS feeds for state and international privacy law updates.
-Runs via GitHub Actions weekly (Wednesdays). Sends digest to info@yourdatahealth.net
-when new items are detected.
+Runs via GitHub Actions weekly (Wednesdays). Sends digest when new items are detected.
 
 Usage:
   python monitor.py                    # Uses config.yaml, state from STATE_FILE
   python monitor.py --dry-run         # Fetch and report without sending email
   python monitor.py --init            # Initialize state (first run)
+
+Recipient: Set email_to in config.yaml or EMAIL_TO env var.
 """
 
 import argparse
@@ -270,7 +271,7 @@ def main():
     args = parser.parse_args()
 
     config = load_config()
-    to_email = os.environ.get("EMAIL_TO") or config.get("email_to", "info@yourdatahealth.net")
+    to_email = os.environ.get("EMAIL_TO") or config.get("email_to", "your-email@example.com")
     seen_ids = load_state()
 
     new_items, all_seen, errors = collect_new_items(config, seen_ids)

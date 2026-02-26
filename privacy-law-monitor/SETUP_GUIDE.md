@@ -33,9 +33,13 @@ Step-by-step instructions to confirm the monitor is running and receive weekly d
 1. On the same **Secrets and variables → Actions** page.
 2. Click **New repository secret**.
 3. For **Name**, enter: `RESEND_FROM`
-4. For **Secret**, enter: `Privacy Monitor <alerts@yourdatahealth.net>`  
+4. For **Secret**, enter: `Privacy Monitor <alerts@yourdomain.com>`  
    (Use a verified domain if you have one.)
 5. Click **Add secret**.
+
+## Step 3b: (Optional) Add EMAIL_TO
+
+If you don't want to put your email in config.yaml, add an `EMAIL_TO` secret with your recipient address.
 
 ---
 
@@ -74,7 +78,7 @@ Step-by-step instructions to confirm the monitor is running and receive weekly d
 
 ## Step 6: Verify the Email
 
-1. Check the inbox for **info@yourdatahealth.net**.
+1. Check the inbox for your configured email address.
 2. Look for:
    - Subject: `Privacy Law Monitor: X new items` or `Privacy Law Monitor: No new items`
    - HTML body with links to RSS items.

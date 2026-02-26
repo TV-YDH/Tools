@@ -1,11 +1,13 @@
 # Privacy Law Monitor - Weekly GitHub Action
 # Runs every Wednesday at 00:00 UTC. Fetches RSS feeds (IAPP, JD Supra, State AG, etc.),
-# detects new items, and sends digest to info@yourdatahealth.net via Resend.
+# detects new items, and sends digest via Resend.
 #
 # Required secrets (Settings > Secrets and variables > Actions):
 #   RESEND_API_KEY - From https://resend.com (free tier: 100 emails/day)
 #
-# Optional: RESEND_FROM - Verified domain email, e.g. alerts@yourdatahealth.net
+# Optional:
+#   RESEND_FROM - Verified domain email, e.g. Privacy Monitor <alerts@yourdomain.com>
+#   EMAIL_TO - Override recipient (otherwise uses config.yaml email_to)
 
 name: Privacy Law Monitor
 
@@ -37,10 +39,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r privacy-law-monitor/requirements.txt
 
+      - name: Prepare config
+        run: |
+          if [ ! -f privacy-law-monitor/config.yaml ]; then
+            cp privacy-law-monitor/config.example.yaml privacy-law-monitor/config.yaml
+          fi
+
       - name: Run monitor
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
           STATE_FILE: ${{ github.workspace }}/privacy-law-monitor/.state/state.json
         run: |
           mkdir -p privacy-law-monitor/.state

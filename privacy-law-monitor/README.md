@@ -1,57 +1,19 @@
 # Privacy Law Monitor
 
-Automated weekly RSS monitor for state and international privacy law updates. Sends a digest email to **info@yourdatahealth.net** when new items are detected from IAPP, JD Supra, State AG Blog, and Privacy Daily.
+A lightweight RSS monitor for state and international privacy law updates. Tracks feeds from IAPP, JD Supra, State AG Blog, and Privacy Daily—sending a weekly digest when new items are detected.
+
+**Built for:** Privacy professionals (DPOs, CPOs), legal/compliance teams, consultants, and developers who need to stay current on BIPA, CCPA, state AG enforcement, and related developments.
 
 ## Features
 
 - **RSS feed monitoring** – IAPP Daily Dashboard, JD Supra Privacy, State AG Blog, Privacy Daily
 - **Weekly schedule** – Runs every Wednesday at 00:00 UTC via GitHub Actions
-- **Email digest** – Sends HTML digest to info@yourdatahealth.net via Resend
+- **Email digest** – Sends HTML digest via Resend (or SMTP fallback)
 - **State persistence** – Uses GitHub Actions cache to remember seen items between runs
-- **Configurable** – Add/remove feeds in `config.yaml`
+- **Configurable** – Add or remove feeds in `config.yaml`
+- **Zero cost** – Resend free tier (100 emails/day), GitHub Actions free tier
 
-## Setup
-
-**Detailed step-by-step guide:** See [SETUP_GUIDE.md](SETUP_GUIDE.md) for line-by-line instructions.
-
-### 1. Resend API Key
-
-1. Sign up at [resend.com](https://resend.com) (free tier: 100 emails/day)
-2. Create an API key
-3. (Optional) Verify your domain (e.g. yourdatahealth.net) to send from alerts@yourdatahealth.net
-
-### 2. GitHub Secrets
-
-In your repo: **Settings → Secrets and variables → Actions**
-
-| Secret | Required | Description |
-|--------|----------|-------------|
-| `RESEND_API_KEY` | Yes | Resend API key |
-| `RESEND_FROM` | No | From address, e.g. `Privacy Monitor <alerts@yourdatahealth.net>`. Defaults to Resend onboarding address if unset. |
-
-### 3. First Run
-
-The workflow initializes state on first run (no email sent). The second run will send the first digest with new items.
-
-To manually trigger: **Actions → Privacy Law Monitor → Run workflow**
-
-## Project Structure
-
-```
-privacy-law-monitor/
-├── config.yaml          # Feeds and email config
-├── monitor.py           # Main script
-├── requirements.txt     # Python deps
-├── FEED_PATTERNS.md     # Feed update patterns (for schedule tuning)
-├── SETUP_GUIDE.md       # Step-by-step setup
-├── .gitignore
-└── README.md
-
-.github/workflows/
-└── privacy-law-monitor.yml   # Weekly Wednesday cron + manual trigger
-```
-
-## Local Usage
+## Quick Start
 
 ```bash
 cd privacy-law-monitor
@@ -64,8 +26,20 @@ python monitor.py --dry-run
 python monitor.py --init
 
 # Full run (requires RESEND_API_KEY)
-RESEND_API_KEY=re_xxx python monitor.py
+RESEND_API_KEY=re_xxx EMAIL_TO=you@example.com python monitor.py
 ```
+
+## Setup for GitHub Actions
+
+1. **Copy config:** `cp config.example.yaml config.yaml` and set `email_to` (or use `EMAIL_TO` secret)
+2. **Resend API Key:** Sign up at [resend.com](https://resend.com), create an API key
+3. **GitHub Secrets** (Settings → Secrets and variables → Actions):
+   - `RESEND_API_KEY` (required)
+   - `RESEND_FROM` (optional, e.g. `Privacy Monitor <alerts@yourdomain.com>`)
+   - `EMAIL_TO` (optional, overrides config.yaml)
+4. **First run:** Actions → Privacy Law Monitor → Run workflow (initializes state; second run sends first digest)
+
+See [SETUP_GUIDE.md](SETUP_GUIDE.md) for step-by-step instructions.
 
 ## Adding Feeds
 
@@ -78,12 +52,27 @@ feeds:
     category: "privacy"  # or "state_ag"
 ```
 
-## Newsletter Subscriptions (Manual)
+## Project Structure
 
-RSS feeds are monitored automatically. For **email newsletters** (IAPP Daily Dashboard, State AG digests, etc.), subscribe manually:
+```
+privacy-law-monitor/
+├── config.yaml          # Your config (copy from config.example.yaml)
+├── config.example.yaml  # Template (no secrets)
+├── monitor.py            # Main script
+├── requirements.txt     # Python deps
+├── LICENSE              # MIT
+├── FEED_PATTERNS.md     # Feed update patterns
+├── SETUP_GUIDE.md       # Step-by-step setup
+└── README.md
 
-- [IAPP Newsletter Subscriptions](https://iapp.org/news/subscriptions)
-- State AG Blog – check stateagblog.com for signup
-- Regional digests (US, EU, APAC) – via IAPP
+.github/workflows/
+└── privacy-law-monitor.yml   # Weekly cron + manual trigger
+```
 
-This tool complements those by monitoring RSS equivalents and sending a consolidated weekly digest.
+## License
+
+MIT License. See [LICENSE](LICENSE).
+
+---
+
+**Privacy Law Monitor** · [Your Data Health](https://yourdata.health) · Clinical Data Engineering & Privacy Consulting

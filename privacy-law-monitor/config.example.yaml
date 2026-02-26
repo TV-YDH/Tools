@@ -1,0 +1,28 @@
+# Privacy Law Monitor - Example Configuration
+# Copy to config.yaml and customize. Never commit config.yaml with real emails.
+# Override email_to via EMAIL_TO environment variable / GitHub secret.
+
+# Email recipient (override via EMAIL_TO env/secret)
+email_to: "your-email@example.com"
+
+# RSS feeds to monitor (add/remove as needed)
+# Sources: IAPP, JD Supra, State AG, Privacy Daily, etc.
+feeds:
+  - name: "IAPP Daily Dashboard"
+    url: "https://iapp.org/rss/daily-dashboard"
+    category: "privacy"
+  - name: "JD Supra - Privacy"
+    url: "https://www.jdsupra.com/resources/syndication/docsRSSfeed.aspx?ftype=Privacy&premium=1"
+    category: "privacy"
+  - name: "State AG Blog - Privacy"
+    url: "https://www.stateagblog.com/feed/"
+    category: "state_ag"
+  - name: "Privacy Daily - State AG Enforcement"
+    url: "https://privacy-daily.com/feed/"
+    category: "state_ag"
+
+# How many items to fetch per feed (most recent)
+items_per_feed: 15
+
+# Days to consider "new" (items newer than this are included in digest)
+new_items_days: 7
