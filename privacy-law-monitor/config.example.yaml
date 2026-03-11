@@ -20,6 +20,9 @@ feeds:
   - name: "Privacy Daily - State AG Enforcement"
     url: "https://privacy-daily.com/feed/"
     category: "state_ag"
+  - name: "Troutman Privacy - Privacy + Cyber + AI"
+    url: "https://www.troutmanprivacy.com/feed"
+    category: "privacy"
 
 # How many items to fetch per feed (most recent)
 items_per_feed: 15

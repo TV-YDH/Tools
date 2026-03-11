@@ -12,6 +12,7 @@ Analysis of when each RSS feed typically publishes new content. Use this to tune
 | **JD Supra – Privacy** | **High volume** | Multiple posts/day from law firms; ~20+ posts/week |
 | **State AG Blog** | **Weekly** | Crowell & Moring weekly roundups (e.g. "State AG News: Feb 12–18") |
 | **Privacy Daily** | **Periodic** | State AG enforcement focus; exact schedule unclear |
+| **Troutman Privacy (Privacy + Cyber + AI)** | **Weekly–daily** | State privacy law updates, litigation, proposed legislation |
 
 ---
 
@@ -39,6 +40,12 @@ Analysis of when each RSS feed typically publishes new content. Use this to tune
 - **URL:** https://privacy-daily.com/feed/
 - **Pattern:** Periodic; State AG enforcement focus
 - **Volume:** Lower than JD Supra
+
+### Troutman Privacy (Privacy + Cyber + AI)
+- **URL:** https://www.troutmanprivacy.com/feed
+- **Pattern:** Weekly to daily; state privacy law updates, proposed legislation, litigation
+- **Volume:** Moderate; high-value state law coverage (Kentucky, Rhode Island, Oregon amendments, etc.)
+- **Recommendation:** Strong addition for state privacy law tracking
 
 ### IAPP Privacy Perspectives (removed)
 - **URL:** https://iapp.org/news/privacy-perspectives/feed/

@@ -6,7 +6,7 @@ A lightweight RSS monitor for state and international privacy law updates. Track
 
 ## Features
 
-- **RSS feed monitoring** – IAPP Daily Dashboard, JD Supra Privacy, State AG Blog, Privacy Daily
+- **RSS feed monitoring** – IAPP Daily Dashboard, JD Supra Privacy, State AG Blog, Privacy Daily, Troutman Privacy
 - **Weekly schedule** – Runs every Wednesday at 00:00 UTC via GitHub Actions
 - **Email digest** – Sends HTML digest via Resend (or SMTP fallback)
 - **State persistence** – Uses GitHub Actions cache to remember seen items between runs
