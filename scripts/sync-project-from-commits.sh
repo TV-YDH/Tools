@@ -73,12 +73,23 @@ if [[ -z "$STATUS_FIELD_ID" || "$STATUS_FIELD_ID" == "null" ]]; then
   exit 1
 fi
 
-# Get Iteration field and current iteration (so items show with iteration:@current filter)
+# Get Iteration field and find iteration that contains TODAY (iteration:@current)
 ITERATION_FIELD_ID=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .id" | head -1)
 CURRENT_ITERATION_ID=""
 if [[ -n "$ITERATION_FIELD_ID" && "$ITERATION_FIELD_ID" != "null" ]]; then
-  CURRENT_ITERATION_ID=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[0].id" | head -1)
-  [[ -n "$CURRENT_ITERATION_ID" && "$CURRENT_ITERATION_ID" != "null" ]] && echo "Iteration: assigning items so they appear with iteration:@current filter"
+  TODAY=$(date +%Y-%m-%d)
+  while IFS='|' read -r iter_id start_date duration; do
+    [[ -z "$iter_id" || "$iter_id" == "null" ]] && continue
+    [[ -z "$duration" ]] && duration=7
+    # Check if today falls in [start_date, start_date+duration) - Linux date
+    END_DATE=$(date -d "$start_date +${duration} days" +%Y-%m-%d 2>/dev/null)
+    if [[ -n "$END_DATE" && "$TODAY" \>= "$start_date" && "$TODAY" \< "$END_DATE" ]]; then
+      CURRENT_ITERATION_ID="$iter_id"
+      break
+    fi
+  done < <(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[]? | \"\(.id)|\(.startDate)|\(.duration // 7)\"" 2>/dev/null)
+  [[ -z "$CURRENT_ITERATION_ID" ]] && CURRENT_ITERATION_ID=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[0].id" | head -1)
+  [[ -n "$CURRENT_ITERATION_ID" && "$CURRENT_ITERATION_ID" != "null" ]] && echo "Iteration: assigning to iteration containing $TODAY (iteration:@current)"
 fi
 
 echo "Project: $PROJECT_NUM | Status field: $STATUS_FIELD_ID"
@@ -188,3 +199,5 @@ if [[ -n "$CURRENT_ITERATION_ID" && "$CURRENT_ITERATION_ID" != "null" && -n "$IT
 fi
 
 echo "Done. Project: https://github.com/users/TV-YDH/projects/$PROJECT_NUM"
+echo ""
+echo "If you still don't see items: In the project, click the filter bar and REMOVE 'iteration:@current'"

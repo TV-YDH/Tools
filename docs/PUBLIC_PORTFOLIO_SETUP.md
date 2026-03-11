@@ -43,3 +43,11 @@ If not already added from the consulting repo:
 - **Repo:** Code, commits, workflows, documentation
 - **Project:** Last 10 commits as items with statuses (In Progress, Todo, Done)
 - **No secrets:** API keys, emails, and config stay private
+
+## Troubleshooting: "0 matching items" in project
+
+If the project shows **0 matching items** with the default `iteration:@current` filter:
+
+1. **Remove the filter:** Click the filter bar → click `iteration:@current` → **Remove** or clear it.
+2. **Or create a new view:** ⋯ → **New view** → name it "All items" → leave filters empty.
+3. The sync workflow assigns items to the iteration containing today's date; if your iterations don't match, remove the filter to see all items.
