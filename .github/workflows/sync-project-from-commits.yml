@@ -1,0 +1,28 @@
+# Sync Tools Project from commits - Daily
+#
+# Keeps TV-YDH's Tools Project (github.com/users/TV-YDH/projects/3) in sync with
+# the last 10 commits. Adds new commits as draft issues, moves statuses.
+#
+# Requires: PROJECT_PAT secret (Settings -> Secrets -> Actions)
+# Without it, the workflow fails and nothing is added.
+
+name: Sync Project from Commits
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 20
+
+      - name: Sync project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }}
+        run: bash scripts/sync-project-from-commits.sh

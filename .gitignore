@@ -5,6 +5,10 @@ __pycache__/
 .venv/
 venv/
 
+# Privacy Law Monitor - never commit secrets or personal config
+privacy-law-monitor/config.yaml
+privacy-law-monitor/.state/
+
 # OS
 .DS_Store
 Thumbs.db
