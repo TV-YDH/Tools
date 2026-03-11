@@ -30,6 +30,17 @@ PROJECT_JSON=$(gh api graphql -f query='
                 name
                 options { id name }
               }
+              ... on ProjectV2IterationField {
+                id
+                name
+                configuration {
+                  iterations {
+                    id
+                    startDate
+                    duration
+                  }
+                }
+              }
             }
           }
         }
@@ -60,6 +71,14 @@ DONE_OPT=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | sele
 if [[ -z "$STATUS_FIELD_ID" || "$STATUS_FIELD_ID" == "null" ]]; then
   echo "::error::Status field not found. Add a Status field with Todo, In Progress, Done."
   exit 1
+fi
+
+# Get Iteration field and current iteration (so items show with iteration:@current filter)
+ITERATION_FIELD_ID=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .id" | head -1)
+CURRENT_ITERATION_ID=""
+if [[ -n "$ITERATION_FIELD_ID" && "$ITERATION_FIELD_ID" != "null" ]]; then
+  CURRENT_ITERATION_ID=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[0].id" | head -1)
+  [[ -n "$CURRENT_ITERATION_ID" && "$CURRENT_ITERATION_ID" != "null" ]] && echo "Iteration: assigning items so they appear with iteration:@current filter"
 fi
 
 echo "Project: $PROJECT_NUM | Status field: $STATUS_FIELD_ID"
@@ -149,5 +168,23 @@ for i in "${!ORDERED_ITEMS[@]}"; do
   ' -f projectId="$PROJECT_ID" -f itemId="$ITEM_ID" -f fieldId="$STATUS_FIELD_ID" -f optionId="$OPT_ID" --silent 2>/dev/null || true
   echo "  #$IDX -> $STATUS"
 done
+
+# 8. Assign items to current iteration (so they show with iteration:@current filter)
+if [[ -n "$CURRENT_ITERATION_ID" && "$CURRENT_ITERATION_ID" != "null" && -n "$ITERATION_FIELD_ID" ]]; then
+  echo "Assigning to current iteration..."
+  for ITEM_ID in "${ORDERED_ITEMS[@]}"; do
+    gh api graphql -f query='
+      mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $iterationId: String!) {
+        updateProjectV2ItemFieldValue(input: {
+          projectId: $projectId
+          itemId: $itemId
+          fieldId: $fieldId
+          value: { iterationId: $iterationId }
+        }) { projectV2Item { id } }
+      }
+    ' -f projectId="$PROJECT_ID" -f itemId="$ITEM_ID" -f fieldId="$ITERATION_FIELD_ID" -f iterationId="$CURRENT_ITERATION_ID" --silent 2>/dev/null || true
+  done
+  echo "  Done - items should now appear with iteration:@current filter"
+fi
 
 echo "Done. Project: https://github.com/users/TV-YDH/projects/$PROJECT_NUM"
