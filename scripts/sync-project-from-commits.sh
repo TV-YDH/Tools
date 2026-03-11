@@ -83,9 +83,12 @@ if [[ -n "$ITERATION_FIELD_ID" && "$ITERATION_FIELD_ID" != "null" ]]; then
     [[ -z "$duration" ]] && duration=7
     # Check if today falls in [start_date, start_date+duration) - Linux date
     END_DATE=$(date -d "$start_date +${duration} days" +%Y-%m-%d 2>/dev/null)
-    if [[ -n "$END_DATE" && "$TODAY" \>= "$start_date" && "$TODAY" \< "$END_DATE" ]]; then
-      CURRENT_ITERATION_ID="$iter_id"
-      break
+    if [[ -n "$END_DATE" && -n "$start_date" ]]; then
+      # YYYY-MM-DD string comparison: today >= start and today < end
+      if [[ ( "$TODAY" == "$start_date" || "$TODAY" > "$start_date" ) && "$TODAY" < "$END_DATE" ]]; then
+        CURRENT_ITERATION_ID="$iter_id"
+        break
+      fi
     fi
   done < <(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[]? | \"\(.id)|\(.startDate)|\(.duration // 7)\"" 2>/dev/null)
   [[ -z "$CURRENT_ITERATION_ID" ]] && CURRENT_ITERATION_ID=$(echo "$PROJECT_JSON" | jq -r "$PROJECT_MATCH | .fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[0].id" | head -1)
