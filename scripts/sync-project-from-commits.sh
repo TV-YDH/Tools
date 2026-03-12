@@ -102,7 +102,7 @@ echo "Project: $PROJECT_NUM | Status field: $STATUS_FIELD_ID"
 echo "Getting last 10 commits..."
 COMMITS=$(git log -10 --format="%h|%s|%ci" | while IFS='|' read -r hash subj date; do echo "${hash}|${subj}|${date:0:10}"; done)
 
-# 4. Get existing project items (issues and draft issues)
+# 4. Get existing project items - only match Issues (not DraftIssues; drafts don't show when project linked to repo)
 echo "Fetching existing project items..."
 ITEMS_JSON=$(gh api graphql -f query='
   query($projectId: ID!) {
@@ -112,7 +112,7 @@ ITEMS_JSON=$(gh api graphql -f query='
           nodes {
             id
             content {
-              ... on DraftIssue { body }
+              __typename
               ... on Issue { body }
             }
           }
@@ -122,13 +122,13 @@ ITEMS_JSON=$(gh api graphql -f query='
   }
 ' -f projectId="$PROJECT_ID" 2>/dev/null) || true
 
-# 5. Add missing commits as real GitHub Issues (so they show when project is linked to repo)
+# 5. Add missing commits as real GitHub Issues (draft issues don't show when project linked to repo)
 declare -A HASH_TO_ITEM
 while IFS='|' read -r hash subj date; do
   [[ -z "$hash" ]] && continue
   EXISTING=$(echo "$ITEMS_JSON" | jq -r --arg h "$hash" '
     .data.node.items.nodes[] |
-    select(.content.body != null and (.content.body | contains("Commit: " + $h))) |
+    select(.content.__typename == "Issue" and .content.body != null and (.content.body | contains("Commit: " + $h))) |
     .id
   ' 2>/dev/null | head -1)
   if [[ -n "$EXISTING" && "$EXISTING" != "null" ]]; then
