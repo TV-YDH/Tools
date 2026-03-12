@@ -1,10 +1,9 @@
 # Sync Tools Project from commits - Daily
 #
-# Keeps TV-YDH's Tools Project (github.com/users/TV-YDH/projects/3) in sync with
-# the last 10 commits. Adds new commits as draft issues, moves statuses.
+# Deletes all items, re-adds as real issues, assigns by commit date.
+# Iteration 1: Feb 15-28, Iteration 2: Mar 1-14, etc.
 #
 # Requires: PROJECT_PAT secret with BOTH project AND repo scopes
-# Creates real issues (not draft) so they show when project is linked to repo.
 
 name: Sync Project from Commits
 
@@ -20,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 20
+          fetch-depth: 50
 
       - name: Sync project
         env:
