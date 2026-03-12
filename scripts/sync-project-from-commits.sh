@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # Sync last 10 commits to TV-YDH's Tools Project.
-# Adds new commits as draft issues, moves items through statuses (In Progress → Todo → Done).
+# Creates real GitHub Issues (not draft issues) so they appear when project is linked to repo.
+# Assigns statuses and iteration.
 #
-# Runs via GitHub Action (or manually with GH_TOKEN=your_pat).
+# Requires: PROJECT_PAT with BOTH 'project' AND 'repo' scopes
 # Project: https://github.com/users/TV-YDH/projects/3
 
 set -e
 REPO="TV-YDH/Tools"
 
 if [[ -z "$GH_TOKEN" ]]; then
-  echo "::error::PROJECT_PAT not set. Add PROJECT_PAT secret (Settings → Secrets → Actions) and run the workflow."
+  echo "::error::PROJECT_PAT not set. Add PROJECT_PAT secret (project + repo scopes) and run the workflow."
   exit 1
 fi
 
@@ -101,7 +102,7 @@ echo "Project: $PROJECT_NUM | Status field: $STATUS_FIELD_ID"
 echo "Getting last 10 commits..."
 COMMITS=$(git log -10 --format="%h|%s|%ci" | while IFS='|' read -r hash subj date; do echo "${hash}|${subj}|${date:0:10}"; done)
 
-# 4. Get existing project items
+# 4. Get existing project items (issues and draft issues)
 echo "Fetching existing project items..."
 ITEMS_JSON=$(gh api graphql -f query='
   query($projectId: ID!) {
@@ -111,10 +112,8 @@ ITEMS_JSON=$(gh api graphql -f query='
           nodes {
             id
             content {
-              ... on DraftIssue {
-                title
-                body
-              }
+              ... on DraftIssue { body }
+              ... on Issue { body }
             }
           }
         }
@@ -123,7 +122,7 @@ ITEMS_JSON=$(gh api graphql -f query='
   }
 ' -f projectId="$PROJECT_ID" 2>/dev/null) || true
 
-# 5. Add missing commits as draft issues
+# 5. Add missing commits as real GitHub Issues (so they show when project is linked to repo)
 declare -A HASH_TO_ITEM
 while IFS='|' read -r hash subj date; do
   [[ -z "$hash" ]] && continue
@@ -139,16 +138,25 @@ while IFS='|' read -r hash subj date; do
     BODY="Commit: $hash
 Date: $date
 https://github.com/$REPO/commit/$hash"
-    NEW_ID=$(gh api graphql -f query='
-      mutation($projectId: ID!, $title: String!, $body: String!) {
-        addProjectV2DraftIssue(input: { projectId: $projectId, title: $title, body: $body }) {
-          projectItem { id }
+    # Create real issue in repo (requires repo scope)
+    ISSUE_NODE_ID=$(gh api "repos/$REPO/issues" -X POST -f title="$subj" -f body="$BODY" --jq '.node_id' 2>/dev/null) || true
+    if [[ -n "$ISSUE_NODE_ID" && "$ISSUE_NODE_ID" != "null" ]]; then
+      # Add issue to project
+      NEW_ID=$(gh api graphql -f query='
+        mutation($projectId: ID!, $contentId: ID!) {
+          addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+            item { id }
+          }
         }
-      }
-    ' -f projectId="$PROJECT_ID" -f title="$subj" -f body="$BODY" --jq '.data.addProjectV2DraftIssue.projectItem.id' 2>/dev/null) || true
-    if [[ -n "$NEW_ID" && "$NEW_ID" != "null" ]]; then
-      HASH_TO_ITEM[$hash]=$NEW_ID
-      echo "  Added: $hash - $subj"
+      ' -f projectId="$PROJECT_ID" -f contentId="$ISSUE_NODE_ID" --jq '.data.addProjectV2ItemById.item.id' 2>/dev/null) || true
+      if [[ -n "$NEW_ID" && "$NEW_ID" != "null" ]]; then
+        HASH_TO_ITEM[$hash]=$NEW_ID
+        echo "  Added (issue): $hash - $subj"
+      else
+        echo "  Warning: created issue but could not add to project"
+      fi
+    else
+      echo "  Error: could not create issue for $hash (check PROJECT_PAT has repo scope)"
     fi
   fi
 done <<< "$COMMITS"
@@ -202,5 +210,3 @@ if [[ -n "$CURRENT_ITERATION_ID" && "$CURRENT_ITERATION_ID" != "null" && -n "$IT
 fi
 
 echo "Done. Project: https://github.com/users/TV-YDH/projects/$PROJECT_NUM"
-echo ""
-echo "If you still don't see items: In the project, click the filter bar and REMOVE 'iteration:@current'"

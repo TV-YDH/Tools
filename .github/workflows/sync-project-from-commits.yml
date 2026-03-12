@@ -3,8 +3,8 @@
 # Keeps TV-YDH's Tools Project (github.com/users/TV-YDH/projects/3) in sync with
 # the last 10 commits. Adds new commits as draft issues, moves statuses.
 #
-# Requires: PROJECT_PAT secret (Settings -> Secrets -> Actions)
-# Without it, the workflow fails and nothing is added.
+# Requires: PROJECT_PAT secret with BOTH project AND repo scopes
+# Creates real issues (not draft) so they show when project is linked to repo.
 
 name: Sync Project from Commits
 
